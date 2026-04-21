@@ -8,6 +8,172 @@ The system is designed for:
 * Real-time tracking of machines and operators
 * Inventory and storage management
 * Quality inspection processes
+---
+erDiagram
+
+    MACHINES {
+        int id PK
+        text name
+        text type
+        numeric cost_per_hour
+        numeric power_consumption_kw
+        text status
+        date purchase_date
+        text location
+    }
+
+    MACHINE_MAINTENANCE {
+        int id PK
+        int machine_id FK
+        text schedule_type
+        date last_maintenance_date
+        date next_due_date
+        text notes
+    }
+
+    MACHINE_LOGS {
+        int id PK
+        int machine_id FK
+        int operator_id FK
+        int workflow_id FK
+        timestamp start_time
+        timestamp end_time
+        text status
+    }
+
+    OPERATORS {
+        int id PK
+        text name
+        numeric hourly_rate
+        text skill_level
+        text status
+    }
+
+    OPERATOR_ACTIVITY {
+        int id PK
+        int operator_id FK
+        int machine_id FK
+        int workflow_id FK
+        timestamp start_time
+        timestamp end_time
+        int units_produced
+        int strokes
+    }
+
+    USERS {
+        int id PK
+        text name
+        text role
+        numeric hourly_rate
+    }
+
+    QUALITY_CHECKS {
+        int id PK
+        int inspector_id FK
+        int workflow_id FK
+        int item_id FK
+        text status
+        text defects
+        timestamp timestamp
+    }
+
+    STORAGE_UNITS {
+        int id PK
+        text uid
+        numeric height
+        numeric width
+        numeric thickness
+        numeric max_weight
+        text location
+    }
+
+    INVENTORY_ITEMS {
+        int id PK
+        text name
+        text type
+        numeric weight
+        int customer_id
+    }
+
+    STORAGE_ALLOCATION {
+        int id PK
+        int storage_id FK
+        int item_id FK
+        int quantity
+        timestamp timestamp
+    }
+
+    WORKFLOWS {
+        int id PK
+        text name
+        int customer_id
+        text status
+        timestamp start_date
+        timestamp end_date
+    }
+
+    WORKFLOW_STEPS {
+        int id PK
+        int workflow_id FK
+        int machine_id FK
+        int step_order
+        numeric expected_time
+    }
+
+    WORKFLOW_EXECUTION {
+        int id PK
+        int workflow_id FK
+        int step_id FK
+        int operator_id FK
+        int machine_id FK
+        timestamp start_time
+        timestamp end_time
+        int output_units
+        text status
+    }
+
+    WORKFLOW_TEMPLATES {
+        int id PK
+        text name
+        text description
+    }
+
+    TEMPLATE_STEPS {
+        int id PK
+        int template_id FK
+        text machine_type
+        int step_order
+        numeric expected_time
+    }
+
+    %% Relationships
+
+    MACHINES ||--o{ MACHINE_MAINTENANCE : has
+    MACHINES ||--o{ MACHINE_LOGS : logs
+    MACHINES ||--o{ WORKFLOW_STEPS : used_in
+    MACHINES ||--o{ WORKFLOW_EXECUTION : executes
+    MACHINES ||--o{ OPERATOR_ACTIVITY : used_by
+
+    OPERATORS ||--o{ OPERATOR_ACTIVITY : performs
+    OPERATORS ||--o{ WORKFLOW_EXECUTION : assigned_to
+
+    USERS ||--o{ QUALITY_CHECKS : performs
+
+    WORKFLOWS ||--o{ WORKFLOW_STEPS : contains
+    WORKFLOWS ||--o{ WORKFLOW_EXECUTION : tracks
+    WORKFLOWS ||--o{ MACHINE_LOGS : linked_to
+    WORKFLOWS ||--o{ OPERATOR_ACTIVITY : linked_to
+    WORKFLOWS ||--o{ QUALITY_CHECKS : evaluated_in
+
+    WORKFLOW_STEPS ||--o{ WORKFLOW_EXECUTION : executed_as
+
+    STORAGE_UNITS ||--o{ STORAGE_ALLOCATION : holds
+    INVENTORY_ITEMS ||--o{ STORAGE_ALLOCATION : stored_in
+
+    INVENTORY_ITEMS ||--o{ QUALITY_CHECKS : inspected
+
+    WORKFLOW_TEMPLATES ||--o{ TEMPLATE_STEPS : defines
+
 
 ---
 
