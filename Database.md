@@ -11,170 +11,168 @@ The system is designed for:
 ---
 
 ```mermaid
-ER-Diagram
+erDiagram
 
-    MACHINES {
-        int id PK
-        text name
-        text type
-        numeric cost_per_hour
-        numeric power_consumption_kw
-        text status
-        date purchase_date
-        text location
-    }
+MACHINES {
+    int id PK
+    string name
+    string type
+    float cost_per_hour
+    float power_consumption_kw
+    string status
+    date purchase_date
+    string location
+}
 
-    MACHINE_MAINTENANCE {
-        int id PK
-        int machine_id FK
-        text schedule_type
-        date last_maintenance_date
-        date next_due_date
-        text notes
-    }
+MACHINE_MAINTENANCE {
+    int id PK
+    int machine_id FK
+    string schedule_type
+    date last_maintenance_date
+    date next_due_date
+    string notes
+}
 
-    MACHINE_LOGS {
-        int id PK
-        int machine_id FK
-        int operator_id FK
-        int workflow_id FK
-        timestamp start_time
-        timestamp end_time
-        text status
-    }
+MACHINE_LOGS {
+    int id PK
+    int machine_id FK
+    int operator_id FK
+    int workflow_id FK
+    string start_time
+    string end_time
+    string status
+}
 
-    OPERATORS {
-        int id PK
-        text name
-        numeric hourly_rate
-        text skill_level
-        text status
-    }
+OPERATORS {
+    int id PK
+    string name
+    float hourly_rate
+    string skill_level
+    string status
+}
 
-    OPERATOR_ACTIVITY {
-        int id PK
-        int operator_id FK
-        int machine_id FK
-        int workflow_id FK
-        timestamp start_time
-        timestamp end_time
-        int units_produced
-        int strokes
-    }
+OPERATOR_ACTIVITY {
+    int id PK
+    int operator_id FK
+    int machine_id FK
+    int workflow_id FK
+    string start_time
+    string end_time
+    int units_produced
+    int strokes
+}
 
-    USERS {
-        int id PK
-        text name
-        text role
-        numeric hourly_rate
-    }
+USERS {
+    int id PK
+    string name
+    string role
+    float hourly_rate
+}
 
-    QUALITY_CHECKS {
-        int id PK
-        int inspector_id FK
-        int workflow_id FK
-        int item_id FK
-        text status
-        text defects
-        timestamp timestamp
-    }
+QUALITY_CHECKS {
+    int id PK
+    int inspector_id FK
+    int workflow_id FK
+    int item_id FK
+    string status
+    string defects
+    string timestamp
+}
 
-    STORAGE_UNITS {
-        int id PK
-        text uid
-        numeric height
-        numeric width
-        numeric thickness
-        numeric max_weight
-        text location
-    }
+STORAGE_UNITS {
+    int id PK
+    string uid
+    float height
+    float width
+    float thickness
+    float max_weight
+    string location
+}
 
-    INVENTORY_ITEMS {
-        int id PK
-        text name
-        text type
-        numeric weight
-        int customer_id
-    }
+INVENTORY_ITEMS {
+    int id PK
+    string name
+    string type
+    float weight
+    int customer_id
+}
 
-    STORAGE_ALLOCATION {
-        int id PK
-        int storage_id FK
-        int item_id FK
-        int quantity
-        timestamp timestamp
-    }
+STORAGE_ALLOCATION {
+    int id PK
+    int storage_id FK
+    int item_id FK
+    int quantity
+    string timestamp
+}
 
-    WORKFLOWS {
-        int id PK
-        text name
-        int customer_id
-        text status
-        timestamp start_date
-        timestamp end_date
-    }
+WORKFLOWS {
+    int id PK
+    string name
+    int customer_id
+    string status
+    string start_date
+    string end_date
+}
 
-    WORKFLOW_STEPS {
-        int id PK
-        int workflow_id FK
-        int machine_id FK
-        int step_order
-        numeric expected_time
-    }
+WORKFLOW_STEPS {
+    int id PK
+    int workflow_id FK
+    int machine_id FK
+    int step_order
+    float expected_time
+}
 
-    WORKFLOW_EXECUTION {
-        int id PK
-        int workflow_id FK
-        int step_id FK
-        int operator_id FK
-        int machine_id FK
-        timestamp start_time
-        timestamp end_time
-        int output_units
-        text status
-    }
+WORKFLOW_EXECUTION {
+    int id PK
+    int workflow_id FK
+    int step_id FK
+    int operator_id FK
+    int machine_id FK
+    string start_time
+    string end_time
+    int output_units
+    string status
+}
 
-    WORKFLOW_TEMPLATES {
-        int id PK
-        text name
-        text description
-    }
+WORKFLOW_TEMPLATES {
+    int id PK
+    string name
+    string description
+}
 
-    TEMPLATE_STEPS {
-        int id PK
-        int template_id FK
-        text machine_type
-        int step_order
-        numeric expected_time
-    }
+TEMPLATE_STEPS {
+    int id PK
+    int template_id FK
+    string machine_type
+    int step_order
+    float expected_time
+}
 
-    %% Relationships
+MACHINES ||--o{ MACHINE_MAINTENANCE : has
+MACHINES ||--o{ MACHINE_LOGS : logs
+MACHINES ||--o{ WORKFLOW_STEPS : used_in
+MACHINES ||--o{ WORKFLOW_EXECUTION : executes
+MACHINES ||--o{ OPERATOR_ACTIVITY : used_by
 
-    MACHINES ||--o{ MACHINE_MAINTENANCE : has
-    MACHINES ||--o{ MACHINE_LOGS : logs
-    MACHINES ||--o{ WORKFLOW_STEPS : used_in
-    MACHINES ||--o{ WORKFLOW_EXECUTION : executes
-    MACHINES ||--o{ OPERATOR_ACTIVITY : used_by
+OPERATORS ||--o{ OPERATOR_ACTIVITY : performs
+OPERATORS ||--o{ WORKFLOW_EXECUTION : assigned_to
 
-    OPERATORS ||--o{ OPERATOR_ACTIVITY : performs
-    OPERATORS ||--o{ WORKFLOW_EXECUTION : assigned_to
+USERS ||--o{ QUALITY_CHECKS : performs
 
-    USERS ||--o{ QUALITY_CHECKS : performs
+WORKFLOWS ||--o{ WORKFLOW_STEPS : contains
+WORKFLOWS ||--o{ WORKFLOW_EXECUTION : tracks
+WORKFLOWS ||--o{ MACHINE_LOGS : linked_to
+WORKFLOWS ||--o{ OPERATOR_ACTIVITY : linked_to
+WORKFLOWS ||--o{ QUALITY_CHECKS : evaluated_in
 
-    WORKFLOWS ||--o{ WORKFLOW_STEPS : contains
-    WORKFLOWS ||--o{ WORKFLOW_EXECUTION : tracks
-    WORKFLOWS ||--o{ MACHINE_LOGS : linked_to
-    WORKFLOWS ||--o{ OPERATOR_ACTIVITY : linked_to
-    WORKFLOWS ||--o{ QUALITY_CHECKS : evaluated_in
+WORKFLOW_STEPS ||--o{ WORKFLOW_EXECUTION : executed_as
 
-    WORKFLOW_STEPS ||--o{ WORKFLOW_EXECUTION : executed_as
+STORAGE_UNITS ||--o{ STORAGE_ALLOCATION : holds
+INVENTORY_ITEMS ||--o{ STORAGE_ALLOCATION : stored_in
 
-    STORAGE_UNITS ||--o{ STORAGE_ALLOCATION : holds
-    INVENTORY_ITEMS ||--o{ STORAGE_ALLOCATION : stored_in
+INVENTORY_ITEMS ||--o{ QUALITY_CHECKS : inspected
 
-    INVENTORY_ITEMS ||--o{ QUALITY_CHECKS : inspected
-
-    WORKFLOW_TEMPLATES ||--o{ TEMPLATE_STEPS : defines
+WORKFLOW_TEMPLATES ||--o{ TEMPLATE_STEPS : defines
 ```
 ---
 
