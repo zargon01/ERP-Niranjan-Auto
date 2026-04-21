@@ -11,6 +11,7 @@ The system is designed for:
 ---
 erDiagram
 ```mermaid
+
 MACHINES {
     int id PK
     string name
