@@ -10,7 +10,7 @@ The system is designed for:
 * Quality inspection processes
 ---
 erDiagram
-
+```mermaid
 MACHINES {
     int id PK
     string name
@@ -171,7 +171,7 @@ INVENTORY_ITEMS ||--o{ STORAGE_ALLOCATION : stored_in
 INVENTORY_ITEMS ||--o{ QUALITY_CHECKS : inspected
 
 WORKFLOW_TEMPLATES ||--o{ TEMPLATE_STEPS : defines
-
+```
 ---
 
 # 📌 Design Principles
